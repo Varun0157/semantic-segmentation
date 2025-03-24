@@ -32,7 +32,7 @@ def _test_epoch(
     model: FCN, dataloader: DataLoader, criterion: torch.nn.Module, device: torch.device
 ) -> float:
     model.eval()
-    val_loss = 0.0
+    test_loss = 0.0
 
     with torch.no_grad():
         for images, labels in tqdm(dataloader, desc="testing"):
@@ -41,10 +41,10 @@ def _test_epoch(
             outputs = model(images)
             loss = criterion(outputs, labels)
 
-            val_loss += loss.item()  # type: ignore
+            test_loss += loss.item()  # type: ignore
 
     num_items = len(dataloader.dataset)  # type: ignore
-    return val_loss / num_items
+    return test_loss / num_items
 
 
 def _train_epoch(
@@ -55,7 +55,7 @@ def _train_epoch(
     device: torch.device,
 ) -> float:
     model.train()
-    epoch_loss = 0.0
+    train_loss = 0.0
 
     for images, labels in tqdm(dataloader, desc="training"):
         images, labels = images.to(device), labels.to(device)
@@ -67,10 +67,10 @@ def _train_epoch(
         loss.backward()  # type: ignore
         optimizer.step()
 
-        epoch_loss += loss.item()  # type: ignore
+        train_loss += loss.item()  # type: ignore
 
     num_items = len(dataloader.dataset)  # type: ignore
-    return epoch_loss / num_items
+    return train_loss / num_items
 
 
 def train_model(
