@@ -4,7 +4,7 @@ from enum import Enum
 from typing import Tuple
 
 import torch
-from torch.utils.data import Dataset
+from torch.utils.data import DataLoader, Dataset
 import torchvision.transforms as transforms
 import cv2
 
@@ -51,3 +51,8 @@ class RoadDataset(Dataset):
         label_tensor = torch.from_numpy(label).unsqueeze(-1)
 
         return image_tensor, label_tensor
+
+
+def get_dataloader(data_dir: str, mode: Mode, **kwargs) -> DataLoader:
+    dataset = RoadDataset(mode, data_dir)
+    return DataLoader(dataset, **kwargs)
