@@ -1,7 +1,7 @@
 import os
 import logging
 from enum import Enum
-from typing import Tuple
+from typing import Tuple, Dict
 
 import torch
 from torch.utils.data import DataLoader, Dataset
@@ -9,9 +9,28 @@ import torchvision.transforms as transforms
 import cv2
 
 
+def get_class_names() -> Dict[int, str]:
+    class_names = {
+        0: "unlabeled",
+        1: "building",
+        2: "fence",
+        3: "other",
+        4: "pedestrian",
+        5: "pole",
+        6: "roadline",
+        7: "road",
+        8: "sidewalk",
+        9: "vegetation",
+        10: "car",
+        11: "wall",
+        12: "traffic sign",
+    }
+    return class_names
+
+
 class Mode(Enum):
     TRAIN = "train"
-    VAL = "val"
+    VALID = "valid"
     TEST = "test"
 
 
@@ -48,7 +67,7 @@ class RoadDataset(Dataset):
 
         label = cv2.cvtColor(cv2.imread(label_path), cv2.COLOR_BGR2RGB)
         label = label[..., 0]
-        label_tensor = torch.from_numpy(label)
+        label_tensor = torch.from_numpy(label).long()
 
         return image_tensor, label_tensor
 
