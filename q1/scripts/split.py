@@ -6,8 +6,8 @@ def split_train_val(dataset_dir, val_ratio=0.15, seed=42):
     train_images_dir = os.path.join(dataset_dir, "train", "images")
     train_labels_dir = os.path.join(dataset_dir, "train", "labels")
 
-    val_images_dir = os.path.join(dataset_dir, "val", "images")
-    val_labels_dir = os.path.join(dataset_dir, "val", "labels")
+    val_images_dir = os.path.join(dataset_dir, "valid", "images")
+    val_labels_dir = os.path.join(dataset_dir, "valid", "labels")
 
     os.makedirs(val_images_dir, exist_ok=True)
     os.makedirs(val_labels_dir, exist_ok=True)
