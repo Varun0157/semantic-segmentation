@@ -55,10 +55,10 @@ def main(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("road segmentation")
-    parser.add_argument("--data-dir", type=str, default="../data/dataset_224")
-    parser.add_argument("--batch-size", type=int, default=8)
+    parser.add_argument("--data_dir", type=str, default="../data/dataset_224")
+    parser.add_argument("--batch_size", type=int, default=8)
     parser.add_argument("--variant", type=str, default="fcn8s")
-    parser.add_argument("--freeze-backbone", action="store_true")
+    parser.add_argument("--freeze_backbone", action="store_true")
     parser.add_argument("--num_epochs", type=int, default=10)
     parser.add_argument("--lr", type=float, default=1e-4)
 
