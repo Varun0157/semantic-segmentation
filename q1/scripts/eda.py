@@ -53,7 +53,7 @@ def visualize_mask_classes(
     image = cv2.imread(os.path.join(images_path, image_file))
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-    mask = cv2.imread(os.path.join(labels_path, label_file), cv2.IMREAD_UNCHANGED)
+    mask = cv2.imread(os.path.join(labels_path, label_file))
     mask = cv2.cvtColor(mask, cv2.COLOR_BGR2RGB)
 
     if len(mask.shape) == 3:
