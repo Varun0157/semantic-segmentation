@@ -8,8 +8,9 @@ class FCN(nn.Module):
         self.variant = variant.lower()
 
         # Feature backbone
-        vgg = vgg16(weights=VGG16_Weights)
-        features = list(vgg.children())
+        vgg = vgg16(weights=VGG16_Weights.DEFAULT)
+        # NOTE: understand what this is
+        features = list(vgg.features.children())
         self.pool3 = nn.Sequential(*features[:17])  # Output: (256, 28, 28)
         self.pool4 = nn.Sequential(*features[17:24])  # Output: (512, 14, 14)
         self.pool5 = nn.Sequential(*features[24:31])  # Output: (512, 7, 7)
@@ -39,6 +40,11 @@ class FCN(nn.Module):
                 )
             case _:
                 raise ValueError("Invalid variant")
+
+    def freeze_backbone(self):
+        for layer in [self.pool3, self.pool4, self.pool5]:
+            for param in layer.parameters():
+                param.requires_grad = False
 
     def forward(self, x):
         # Feature extraction
