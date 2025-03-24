@@ -8,42 +8,40 @@ from torch.utils.data import DataLoader
 from src.model import FCN
 
 
-def _validate(model: FCN, dataloader: DataLoader, device: torch.device) -> float:
-    # TODO: divide the loss by total instances instead of dataloader len
-    # NOTE: leaving it in train to get loss output.
-    #   wrapping in a no_grad to ensure no learning
-
-    model.train()
+def _validate(
+    model: FCN, dataloader: DataLoader, criterion: torch.nn.Module, device: torch.device
+) -> float:
+    model.eval()
     val_loss = 0.0
 
     with torch.no_grad():
-        for images, targets, _ in tqdm(dataloader, desc="validating"):
-            images = list(image.to(device) for image in images)
-            targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
+        for images, labels in tqdm(dataloader, desc="validating"):
+            images, labels = images.to(device), labels.to(device)
 
-            loss_dict = model(images, targets)
-            loss = sum(loss for loss in loss_dict.values())
+            outputs = model(images)
+            loss = criterion(outputs, labels)
 
             val_loss += loss.item()  # type: ignore
 
-    return val_loss / len(dataloader)
+    num_items = len(dataloader.dataset)  # type: ignore
+    return val_loss / num_items
 
 
 def _train_epoch(
     model: FCN,
     optimizer,
     dataloader: DataLoader,
+    criterion: torch.nn.Module,  # TODO: fix type
     device: torch.device,
 ) -> float:
     model.train()
     epoch_loss = 0.0
 
-    for images, targets, _ in tqdm(dataloader, desc="training"):
-        images = list(image.to(device) for image in images)
-        targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
+    for images, labels in tqdm(dataloader, desc="training"):
+        images, labels = images.to(device), labels.to(device)
+        outputs = model(images)
 
-        loss_dict = model(images, targets)
-        loss = sum(loss for loss in loss_dict.values())
+        loss = criterion(outputs, labels)
 
         optimizer.zero_grad()
         loss.backward()  # type: ignore
@@ -51,7 +49,8 @@ def _train_epoch(
 
         epoch_loss += loss.item()  # type: ignore
 
-    return epoch_loss / len(dataloader)
+    num_items = len(dataloader.dataset)  # type: ignore
+    return epoch_loss / num_items
 
 
 def train_model(
@@ -62,13 +61,14 @@ def train_model(
     device: torch.device,
     ckpt_path: str,
 ) -> None:
-    optimizer = None  # TODO: add optimizer
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+    criterion = torch.nn.CrossEntropyLoss()
 
     for epoch in range(num_epochs):
         start_time = time.time()
 
-        train_loss = _train_epoch(model, optimizer, train_dataloader, device)
-        val_loss = _validate(model, val_dataloader, device)
+        train_loss = _train_epoch(model, optimizer, train_dataloader, criterion, device)
+        val_loss = _validate(model, val_dataloader, criterion, device)
 
         wandb.log({"train_loss": train_loss, "val_loss": val_loss})
 

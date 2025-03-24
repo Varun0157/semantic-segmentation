@@ -48,7 +48,7 @@ class RoadDataset(Dataset):
 
         label = cv2.cvtColor(cv2.imread(label_path), cv2.COLOR_BGR2RGB)
         label = label[..., 0]
-        label_tensor = torch.from_numpy(label).unsqueeze(-1)
+        label_tensor = torch.from_numpy(label)
 
         return image_tensor, label_tensor
 
