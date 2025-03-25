@@ -1,5 +1,4 @@
 import os
-import logging
 from enum import Enum
 from typing import Tuple, Dict
 
@@ -51,7 +50,7 @@ class RoadDataset(Dataset):
             len(self.image_files) > 0
         ), "no image files found in the training directory"
 
-        logging.info(f"loaded {len(self.image_files)} {mode.value} images")
+        print(f"loaded {len(self.image_files)} {mode.value} images")
 
     def __len__(self):
         return len(self.image_files)
