@@ -64,13 +64,14 @@ class RoadDataset(Dataset):
         image_tensor = transforms.ToTensor()(image)
         assert type(image_tensor) is torch.Tensor
 
-        label = cv2.cvtColor(cv2.imread(label_path), cv2.COLOR_BGR2RGB)
+        label = cv2.imread(label_path)
+        label = cv2.cvtColor(label, cv2.COLOR_BGR2RGB)
         label = label[..., 0]
         label_tensor = torch.from_numpy(label).long()
 
         return image_tensor, label_tensor
 
 
-def get_dataloader(data_dir: str, mode: Mode, **kwargs) -> DataLoader:
+def get_dataloader(data_dir: str, mode: Mode, **kwargs) -> DataLoader[RoadDataset]:
     dataset = RoadDataset(mode, data_dir)
     return DataLoader(dataset, **kwargs)
