@@ -32,7 +32,10 @@ def main(
         model.freeze_backbone()
     proj_name = get_project_name(variant, freeze_backbone)
 
-    ckpt_path = os.path.join("ckpts", f"{proj_name}.pth")
+    ckpts_dir = "ckpts"
+    if not os.path.exists(ckpts_dir):
+        os.makedirs(ckpts_dir)
+    ckpt_path = os.path.join(ckpts_dir, f"{proj_name}.pth")
 
     run = wandb.init(project="cv-a4", name=proj_name)
     train_model(
