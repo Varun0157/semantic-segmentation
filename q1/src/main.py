@@ -23,8 +23,8 @@ def main(
 ):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    train_dataloader = get_dataloader(data_dir, Mode("train"), batch_size=batch_size)
-    valid_dataloader = get_dataloader(data_dir, Mode("valid"), batch_size=batch_size)
+    train_dataloader = get_dataloader(data_dir, Mode.TRAIN, batch_size=batch_size)
+    valid_dataloader = get_dataloader(data_dir, Mode.VALID, batch_size=batch_size)
 
     classes = get_class_names()
     model = FCN(variant=variant, num_classes=len(classes)).to(device)
@@ -48,7 +48,7 @@ def main(
         ckpt_path=ckpt_path,
     )
 
-    test_dataloader = get_dataloader(data_dir, Mode("test"), batch_size=batch_size)
+    test_dataloader = get_dataloader(data_dir, Mode.TEST, batch_size=batch_size)
 
     model.load_state_dict(torch.load(ckpt_path, weights_only=True))
     test_model(model, test_dataloader, device)
