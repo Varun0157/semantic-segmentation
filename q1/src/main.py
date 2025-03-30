@@ -4,29 +4,31 @@ import argparse
 import torch
 import wandb
 
-from src.model import FCN
+from src.model import FCN, FCNVariant
 from src.loops import train_model, test_model
 from src.dataset import get_class_names, get_dataloader, Mode
 
 
-def get_project_name(variant: str, freeze_backbone: bool):
-    return f"road-segmentation-{variant}-{'freeze' if freeze_backbone else 'unfreeze'}"
+def get_project_name(variant: FCNVariant, freeze_backbone: bool):
+    return f"road-segmentation-{variant.value}-{'freeze' if freeze_backbone else 'unfreeze'}"
 
 
 def main(
     data_dir: str,
     batch_size: int,
-    variant: str,
+    variant_arg: str,
     freeze_backbone: bool,
     num_epochs: int,
     lr: float,
 ):
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() and False else "cpu")
 
     train_dataloader = get_dataloader(data_dir, Mode.TRAIN, batch_size=batch_size)
     valid_dataloader = get_dataloader(data_dir, Mode.VALID, batch_size=batch_size)
 
     classes = get_class_names()
+
+    variant = FCNVariant(variant_arg)
     model = FCN(variant=variant, num_classes=len(classes)).to(device)
     if freeze_backbone:
         model.freeze_backbone()
