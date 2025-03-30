@@ -50,7 +50,7 @@ class RoadDataset(Dataset):
             len(self.image_files) > 0
         ), "no image files found in the training directory"
 
-        print(f"loaded {len(self.image_files)} {mode.value} images")
+        print(f"{mode.value} - loaded {len(self.image_files)} images")
 
     def __len__(self):
         return len(self.image_files)
