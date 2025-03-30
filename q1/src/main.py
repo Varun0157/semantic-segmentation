@@ -21,7 +21,7 @@ def main(
     num_epochs: int,
     lr: float,
 ):
-    device = torch.device("cuda" if torch.cuda.is_available() and False else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     train_dataloader = get_dataloader(data_dir, Mode.TRAIN, batch_size=batch_size)
     valid_dataloader = get_dataloader(data_dir, Mode.VALID, batch_size=batch_size)
