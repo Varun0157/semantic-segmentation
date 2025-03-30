@@ -10,6 +10,10 @@ from src.model import FCN
 from src.dataset import get_class_names
 
 
+def _get_loss_criterion() -> torch.nn.CrossEntropyLoss:
+    return torch.nn.CrossEntropyLoss()
+
+
 def _compute_miou(model, dataloader, device, num_classes):
     model.eval()
 
@@ -87,27 +91,30 @@ def train_model(
     optimizer = torch.optim.Adam(
         filter(lambda p: p.requires_grad, model.parameters()), lr=lr
     )
-    criterion = torch.nn.CrossEntropyLoss()
+    criterion = _get_loss_criterion()
 
     num_classes = len(get_class_names())
     for epoch in range(num_epochs):
         start_time = time.time()
 
+        # run epoch
         train_loss = _train_epoch(model, optimizer, train_dataloader, criterion, device)
         val_loss = _test_epoch(model, val_dataloader, criterion, device)
         miou = _compute_miou(model, val_dataloader, device, num_classes=num_classes)
 
+        # log losses
         wandb.log(
             {"train/loss": train_loss, "val/loss": val_loss, "val/mean_iou": miou}
         )
+
+        # checkpoint model
+        torch.save(model.state_dict(), ckpt_path)
 
         time_taken = time.time() - start_time
         print(
             f"epoch {epoch + 1}/{num_epochs} : train Loss: {train_loss:.4f}"
             + f" - val loss: {val_loss:.4f} - val mIoU: {miou:.4f} -- time: {time_taken:.2f}s"
         )
-
-        torch.save(model.state_dict(), ckpt_path)
 
 
 def test_model(
@@ -117,7 +124,7 @@ def test_model(
 ) -> None:
     print("\tTESTING")
 
-    criterion = torch.nn.CrossEntropyLoss()
+    criterion = _get_loss_criterion()
 
     num_classes = len(get_class_names())
     start_time = time.time()
