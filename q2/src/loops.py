@@ -6,7 +6,7 @@ from tqdm import tqdm
 from torch.utils.data import DataLoader
 from torchmetrics.segmentation import MeanIoU
 
-from src.unet.vanilla import UNet
+from src.unet.unet import UNet
 from src.dataset import get_class_names
 
 

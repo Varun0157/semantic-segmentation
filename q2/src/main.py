@@ -4,7 +4,7 @@ import argparse
 import torch
 import wandb
 
-from src.unet.vanilla import UNet
+from src.unet.factory import fetch_unet, Variant
 from src.loops import train_model, test_model
 from src.dataset import get_class_names, get_dataloader, Mode
 
@@ -27,7 +27,8 @@ def main(
 
     classes = get_class_names()
 
-    model = UNet(3, len(classes)).to(device)
+    unet = fetch_unet(Variant(variant))
+    model = unet(in_channels=3, out_channels=len(classes)).to(device)
     proj_name = get_project_name(variant)
 
     ckpts_dir = "ckpts"

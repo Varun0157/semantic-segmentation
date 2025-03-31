@@ -7,6 +7,8 @@ references:
 import torch
 import torch.nn as nn
 
+from src.unet.unet import UNet
+
 
 class DoubleConv(nn.Module):
     """
@@ -112,9 +114,9 @@ class Up(nn.Module):
         return self.conv(x)
 
 
-class UNet(nn.Module):
+class VanillaUNet(UNet):
     def __init__(self, in_channels: int, out_channels: int):
-        super(UNet, self).__init__()
+        super(VanillaUNet, self).__init__(in_channels, out_channels)
 
         # encoder
         self.inc = DoubleConv(in_channels, 64)  # initial double conv
