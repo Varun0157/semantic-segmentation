@@ -55,9 +55,7 @@ def visualize_mask_classes(
 
     mask = cv2.imread(os.path.join(labels_path, label_file))
     mask = cv2.cvtColor(mask, cv2.COLOR_BGR2RGB)
-
-    if len(mask.shape) == 3:
-        mask = mask[:, :, 0]
+    mask = mask[..., 0]
 
     class_names = get_class_names()
     num_classes = len(class_names)
@@ -92,5 +90,5 @@ def visualize_mask_classes(
 
 
 if __name__ == "__main__":
-    dataset_directory = "../data/dataset_224"
+    dataset_directory = os.path.join("..", "data", "dataset_224")
     visualize_mask_classes(dataset_directory)
