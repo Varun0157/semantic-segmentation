@@ -62,9 +62,8 @@ if __name__ == "__main__":
     )
     parser.add_argument("--batch_size", type=int, default=8)
     parser.add_argument("--variant", type=str, default="vanilla")
-    parser.add_argument("--freeze_backbone", action="store_true")
     parser.add_argument("--num_epochs", type=int, default=10)
-    parser.add_argument("--lr", type=float, default=1e-4)
+    parser.add_argument("--lr", type=float, default=1e-3)
 
     args = parser.parse_args()
 
