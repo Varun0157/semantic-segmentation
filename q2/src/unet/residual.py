@@ -78,18 +78,13 @@ class Up(nn.Module):
 
     def __init__(self, in_channels, out_channels):
         super(Up, self).__init__()
-        # in_channels comes from the bottleneck (or previous decoder stage)
-        # and is upsampled to out_channels.
         self.up = nn.ConvTranspose2d(in_channels, out_channels, kernel_size=2, stride=2)
-        # After concatenation, the number of channels is doubled.
         self.conv = ResidualBlock(out_channels * 2, out_channels)
 
     def forward(self, x1, x2):
         # x1: decoder feature map, x2: corresponding encoder feature map (skip connection)
         x1 = self.up(x1)
-        # Crop x2 if necessary to match the spatial dimensions of x1
         x2 = _crop_tensor(x2, x1.detach().clone())
-        # Concatenate along the channel dimension
         x = torch.cat([x2, x1], dim=1)
         return self.conv(x)
 
