@@ -9,15 +9,14 @@ from src.loops import train_model, test_model
 from src.dataset import get_class_names, get_dataloader, Mode
 
 
-def get_project_name(variant: str, freeze_backbone: bool):
-    return f"road-segmentation-{variant}-{'freeze' if freeze_backbone else 'unfreeze'}"
+def get_project_name(variant: str):
+    return f"road-segmentation-{variant}-unet"
 
 
 def main(
     data_dir: str,
     batch_size: int,
     variant: str,
-    freeze_backbone: bool,
     num_epochs: int,
     lr: float,
 ):
@@ -29,7 +28,7 @@ def main(
     classes = get_class_names()
 
     model = UNet(3, len(classes)).to(device)
-    proj_name = get_project_name(variant, freeze_backbone)
+    proj_name = get_project_name(variant)
 
     ckpts_dir = "ckpts"
     if not os.path.exists(ckpts_dir):
@@ -71,7 +70,6 @@ if __name__ == "__main__":
         args.data_dir,
         args.batch_size,
         args.variant,
-        args.freeze_backbone,
         args.num_epochs,
         args.lr,
     )
