@@ -91,7 +91,7 @@ class AttentionGate(nn.Module):
         x1 = self.W_x(x)
         f = self.relu(g1 + x1)
         psi = self.sigmoid(self.psi(f))
-        # Multiply x with the attention map (α coefficient is kept as 1)
+        # not multiplying by anything as alpha is fixed to 1
         return x * psi
 
 
