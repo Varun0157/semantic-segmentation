@@ -1,5 +1,11 @@
+"""
+modified from Vanilla UNet
+"""
+
 import torch
 import torch.nn as nn
+
+from src.unet.unet import UNet
 
 
 class DoubleConv(nn.Module):
@@ -127,13 +133,13 @@ class Up(nn.Module):
         return self.conv(x)
 
 
-class VanillaUNetWithAttention(nn.Module):
+class GatedAttentionUNet(UNet):
     """
     U-Net architecture with attention gates integrated into the skip connections.
     """
 
     def __init__(self, in_channels: int, out_channels: int):
-        super(VanillaUNetWithAttention, self).__init__()
+        super(GatedAttentionUNet, self).__init__(in_channels, out_channels)
 
         # Encoder
         self.inc = DoubleConv(in_channels, 64)  # Level 0
@@ -163,10 +169,10 @@ class VanillaUNetWithAttention(nn.Module):
         x4 = self.down4(x3)  # Level 4
 
         # Decoder pathway with attention on skip connections
-        x = self.up1(x4, x3)  # Attention gate on skip connection from Level 3
-        x = self.up2(x, x2)  # Attention gate on skip connection from Level 2
-        x = self.up3(x, x1)  # Attention gate on skip connection from Level 1
-        x = self.up4(x, x0)  # Attention gate on skip connection from Level 0
+        x = self.up1(x4, x3)
+        x = self.up2(x, x2)
+        x = self.up3(x, x1)
+        x = self.up4(x, x0)
 
         # Final output
         logits = self.outc(x)

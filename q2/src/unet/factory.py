@@ -5,12 +5,14 @@ from src.unet.unet import UNet
 from src.unet.vanilla import VanillaUNet
 from src.unet.noskip import NoSkipUNet
 from src.unet.residual import ResidualUNet
+from src.unet.gated_attention import GatedAttentionUNet
 
 
 class Variant(Enum):
     Vanilla = "vanilla"
     NoSkip = "noskip"
     Residual = "residual"
+    GatedAttention = "gated_attention"
 
 
 def fetch_unet(variant: Variant) -> type[UNet]:
@@ -21,3 +23,5 @@ def fetch_unet(variant: Variant) -> type[UNet]:
             return NoSkipUNet
         case Variant.Residual:
             return ResidualUNet
+        case Variant.GatedAttention:
+            return GatedAttentionUNet
