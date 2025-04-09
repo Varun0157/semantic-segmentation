@@ -4,6 +4,7 @@ import argparse
 import torch
 import wandb
 
+from src.visualise import visualize_predictions
 from src.model import FCN, FCNVariant
 from src.loops import train_model, test_model
 from src.dataset import get_class_names, get_dataloader, Mode
@@ -56,6 +57,11 @@ def main(
     test_model(model, test_dataloader, device)
 
     run.finish()
+
+    res_dir = os.path.join(ckpts_dir, proj_name)
+    if not os.path.exists(res_dir):
+        os.makedirs(res_dir)
+    visualize_predictions(model, test_dataloader, device, res_dir)
 
 
 if __name__ == "__main__":
