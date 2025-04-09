@@ -11,6 +11,10 @@ class FCNVariant(Enum):
 
 
 class FCN(nn.Module):
+    """
+    see ../docs/ref.png
+    """
+
     def __init__(self, variant: FCNVariant, num_classes: int):
         super().__init__()
         self.variant = variant
@@ -20,6 +24,7 @@ class FCN(nn.Module):
         # for name, module in vgg.features.named_children():
         #     print(f"{name}: {module}")
 
+        # we only extract the feature extractors, we convolutionise the classifier
         features = list(vgg.features.children())
 
         # define feature extractors:
@@ -30,6 +35,8 @@ class FCN(nn.Module):
         # pool5: layers 24 to 30 produce features at 1/32 resolution.
         self.pool5 = nn.Sequential(*features[24:31])
 
+        # NOTE:
+        # this is what the paper calls "convolutionalising" the classifier
         # score layers: 1x1 convolutions to map features to the desired number of classes.
         if self.variant == FCNVariant.FCN8S:
             self.score_pool3 = nn.Conv2d(256, num_classes, kernel_size=1)
