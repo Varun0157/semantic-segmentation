@@ -53,11 +53,6 @@ class Down(nn.Module):
 
 
 def _crop_tensor(x: torch.Tensor, target_tensor: torch.Tensor) -> torch.Tensor:
-    """
-    Crop tensor x to the spatial dimensions of target_tensor.
-
-    Assumes both tensors are square.
-    """
     _, _, H, W = x.shape
     _, _, target_H, target_W = target_tensor.shape
     assert H == W and target_H == target_W, "only square tensors are supported"
@@ -90,10 +85,6 @@ class Up(nn.Module):
 
 
 class ResidualUNet(UNet):
-    """
-    U-Net architecture with skip connections and residual convolutional blocks.
-    """
-
     def __init__(self, in_channels: int, out_channels: int):
         super(ResidualUNet, self).__init__(in_channels, out_channels)
 

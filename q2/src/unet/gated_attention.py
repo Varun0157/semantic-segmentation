@@ -9,10 +9,6 @@ from src.unet.unet import UNet
 
 
 class DoubleConv(nn.Module):
-    """
-    Convolutional block with two 3x3 convolutions (with padding=1)
-    """
-
     def __init__(self, in_channels: int, out_channels: int):
         super(DoubleConv, self).__init__()
         self.conv = nn.Sequential(
@@ -27,10 +23,6 @@ class DoubleConv(nn.Module):
 
 
 class Down(nn.Module):
-    """
-    Downsampling block: maxpool followed by double convolution.
-    """
-
     def __init__(self, in_channels, out_channels):
         super(Down, self).__init__()
         self.pool_conv = nn.Sequential(
@@ -42,10 +34,6 @@ class Down(nn.Module):
 
 
 def _crop_tensor(x: torch.Tensor, target_tensor: torch.Tensor) -> torch.Tensor:
-    """
-    Center-crop tensor x to the size of target_tensor.
-    Assumes both x and target_tensor are square.
-    """
     _, _, H, W = x.shape
     _, _, target_H, target_W = target_tensor.shape
     assert H == W and target_H == target_W, "only square tensors are supported"
@@ -56,7 +44,8 @@ def _crop_tensor(x: torch.Tensor, target_tensor: torch.Tensor) -> torch.Tensor:
     return x[:, :, start:end, start:end]
 
 
-# --- New: Attention Gate Module ---
+# --- Attention Gate Module ---
+# ref: https://github.com/LeeJunHyun/Image_Segmentation/blob/5e9da9395c52b119d55dfc6532c34ac0e88f446e/network.py#L108
 
 
 class AttentionGate(nn.Module):
@@ -65,18 +54,18 @@ class AttentionGate(nn.Module):
     It computes an attention coefficient for the encoder feature map (x) using the gating signal (g)
     from the decoder.
 
-    Both x and g are first mapped to an intermediate number of channels F_int (typically F_int = F_l // 2).
-    Then, the attention coefficients are computed as:
-
-        f = ReLU( W_x(x) + W_g(g) )
-        psi = Sigmoid( psi_conv(f) )
-        output = x * psi   (with α fixed to 1)
+    Both x and g are first mapped to an intermediate number of channels F_int (here F_int = F_l // 2)
+        based on the above reference.
     """
 
     def __init__(self, F_g, F_l, F_int):
         super(AttentionGate, self).__init__()
+
+        # params selected to retain spatial dims as in the image
         self.W_g = nn.Conv2d(F_g, F_int, kernel_size=1, stride=1, padding=0, bias=True)
         self.W_x = nn.Conv2d(F_l, F_int, kernel_size=1, stride=1, padding=0, bias=True)
+
+        # 1x1x1 as in the image
         self.psi = nn.Conv2d(F_int, 1, kernel_size=1, stride=1, padding=0, bias=True)
         self.relu = nn.ReLU(inplace=True)
         self.sigmoid = nn.Sigmoid()
@@ -92,6 +81,7 @@ class AttentionGate(nn.Module):
         f = self.relu(g1 + x1)
         psi = self.sigmoid(self.psi(f))
         # not multiplying by anything as alpha is fixed to 1
+        # alpha is just for scaling
         return x * psi
 
 
@@ -99,15 +89,6 @@ class AttentionGate(nn.Module):
 
 
 class Up(nn.Module):
-    """
-    Upsampling block with attention gating on the skip connection.
-    It first upsamples the decoder feature map using a ConvTranspose2d.
-    Then it applies an attention gate to the encoder feature map (skip connection)
-    using the upsampled decoder feature map as the gating signal.
-    Finally, it concatenates the gated encoder features with the upsampled features
-    and applies a DoubleConv.
-    """
-
     def __init__(self, in_channels, out_channels):
         super(Up, self).__init__()
         self.up = nn.ConvTranspose2d(in_channels, out_channels, kernel_size=2, stride=2)
@@ -122,9 +103,7 @@ class Up(nn.Module):
         x1: feature map from decoder (to be upsampled; gating signal).
         x2: feature map from encoder (skip connection).
         """
-        # Upsample decoder feature map
         x1 = self.up(x1)
-        # Crop encoder feature map x2 if necessary to match x1 spatial dimensions
         x2 = _crop_tensor(x2, x1.detach().clone())
         # Apply attention gate on the encoder feature map using x1 as gating signal
         x2 = self.att_gate(x2, x1)
@@ -134,10 +113,6 @@ class Up(nn.Module):
 
 
 class GatedAttentionUNet(UNet):
-    """
-    U-Net architecture with attention gates integrated into the skip connections.
-    """
-
     def __init__(self, in_channels: int, out_channels: int):
         super(GatedAttentionUNet, self).__init__(in_channels, out_channels)
 

@@ -9,14 +9,6 @@ from src.unet.unet import UNet
 
 
 class DoubleConv(nn.Module):
-    """
-    Convolutional block:
-
-    - Each block consists of two convolutional layers.
-    - Spatial dimensions are preserved.
-    - Kernel size of 3 (from the original paper) with padding of 1.
-    """
-
     def __init__(self, in_channels: int, out_channels: int):
         super(DoubleConv, self).__init__()
         self.conv = nn.Sequential(
@@ -31,12 +23,6 @@ class DoubleConv(nn.Module):
 
 
 class Down(nn.Module):
-    """
-    Downsampling block:
-
-    - Uses MaxPool to reduce spatial dimensions followed by a double convolution.
-    """
-
     def __init__(self, in_channels, out_channels):
         super(Down, self).__init__()
         self.pool_conv = nn.Sequential(
