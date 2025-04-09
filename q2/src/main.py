@@ -37,7 +37,13 @@ def main(
         os.makedirs(ckpts_dir)
     ckpt_path = os.path.join(ckpts_dir, f"{proj_name}.pth")
 
-    run = wandb.init(project="cv-a4-unet", name=proj_name)
+    run = wandb.init(
+        project="cv-a4-unet",
+        name=proj_name,
+        config={
+            "learning rate": lr,
+        },
+    )
     train_model(
         model,
         train_dataloader,
