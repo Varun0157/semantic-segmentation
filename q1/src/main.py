@@ -5,13 +5,9 @@ import torch
 import wandb
 
 from src.visualise import visualize_predictions
-from src.model import FCN, FCNVariant
+from src.model import FCN, FCNVariant, get_project_name
 from src.loops import train_model, test_model
 from src.dataset import get_class_names, get_dataloader, Mode
-
-
-def get_project_name(variant: FCNVariant, freeze_backbone: bool):
-    return f"road-segmentation-{variant.value}-{'freeze' if freeze_backbone else 'unfreeze'}"
 
 
 def main(

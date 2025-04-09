@@ -1,9 +1,12 @@
 import os
+import argparse
+
 import torch
 import matplotlib.pyplot as plt
 from torch.utils.data.dataloader import DataLoader
 
-from src.model import FCN
+from src.dataset import Mode, get_class_names, get_dataloader
+from src.model import FCN, FCNVariant, get_project_name
 
 
 def visualize_predictions(
@@ -48,3 +51,35 @@ def visualize_predictions(
         plt.tight_layout()
         save_path = os.path.join(res_dir, f"pred_{i}.png")
         plt.savefig(save_path)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser("road segmentation")
+    parser.add_argument(
+        "--data_dir", type=str, default=os.path.join("..", "data", "dataset_224")
+    )
+    parser.add_argument("--batch_size", type=int, default=8)
+    parser.add_argument("--variant", type=str, default="fcn8s")
+    parser.add_argument("--freeze_backbone", action="store_true")
+
+    args = parser.parse_args()
+
+    classes = get_class_names()
+    variant = FCNVariant(args.variant)
+    model = FCN(variant=variant, num_classes=len(classes))
+    if args.freeze_backbone:
+        model.freeze_backbone()
+    proj_name = get_project_name(variant, args.freeze_backbone)
+    ckpt_path = os.path.join("ckpts", f"{proj_name}.pth")
+    model.load_state_dict(torch.load(ckpt_path, weights_only=True))
+
+    test_dataloader = get_dataloader(
+        args.data_dir, Mode.TEST, batch_size=args.batch_size
+    )
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    res_dir = os.path.join("ckpts", proj_name)
+    if not os.path.exists(res_dir):
+        os.makedirs(res_dir)
+    visualize_predictions(model, test_dataloader, device, res_dir)

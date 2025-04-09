@@ -87,3 +87,7 @@ class FCN(nn.Module):
         upscore2_2 = self.upscore2(fused)  # upsample fused score to H/8, W/8
         fused_final = score3 + upscore2_2
         return self.final_upsampler(fused_final)
+
+
+def get_project_name(variant: FCNVariant, freeze_backbone: bool):
+    return f"road-segmentation-{variant.value}-{'freeze' if freeze_backbone else 'unfreeze'}"
