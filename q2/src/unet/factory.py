@@ -25,3 +25,7 @@ def fetch_unet(variant: Variant) -> type[UNet]:
             return ResidualUNet
         case Variant.GatedAttention:
             return GatedAttentionUNet
+
+
+def get_project_name(variant: str):
+    return f"road-segmentation-{variant}-unet"

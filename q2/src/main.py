@@ -5,13 +5,9 @@ import torch
 import wandb
 
 from src.visualise import visualize_predictions
-from src.unet.factory import fetch_unet, Variant
+from src.unet.factory import fetch_unet, Variant, get_project_name
 from src.loops import train_model, test_model
 from src.dataset import get_class_names, get_dataloader, Mode
-
-
-def get_project_name(variant: str):
-    return f"road-segmentation-{variant}-unet"
 
 
 def main(
