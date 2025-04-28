@@ -7,5 +7,5 @@ python scripts/split.py or eda.py if required
 
 ## TODO
 
-- [ ] prune data and checkpoints
+- [x] prune data and checkpoints
 - [ ] make nicer readme
