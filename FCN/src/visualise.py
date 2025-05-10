@@ -60,15 +60,13 @@ if __name__ == "__main__":
     )
     parser.add_argument("--batch_size", type=int, default=8)
     parser.add_argument("--variant", type=str, default="fcn8s")
-    parser.add_argument("--freeze_backbone", action="store_true")
 
     args = parser.parse_args()
 
     classes = get_class_names()
     variant = FCNVariant(args.variant)
     model = FCN(variant=variant, num_classes=len(classes))
-    if args.freeze_backbone:
-        model.freeze_backbone()
+
     proj_name = get_project_name(variant, args.freeze_backbone)
     ckpt_path = os.path.join("ckpts", f"{proj_name}.pth")
     model.load_state_dict(torch.load(ckpt_path, weights_only=True))
