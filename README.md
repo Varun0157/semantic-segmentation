@@ -4,6 +4,8 @@ Semantic Segmentation using FCN and UNet models, done as a part of Assignment 4 
 
 ### FCN
 
+For ablations and visualisations, see [the report](./FCN/report.pdf). 
+
 To train and test the model, run: 
 ```sh
 python -m src.main <options>
@@ -17,6 +19,8 @@ python -m src.visualise <options>
 The options include the data directory, batch size (every item in a batch is visualised), and the model variant. 
 
 ### UNet
+
+For ablations and visualisations, see [the report](./UNet/report.pdf). 
 
 To train and test the model, run: 
 ```sh
