@@ -60,8 +60,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--batch_size", type=int, default=8)
     parser.add_argument("--variant", type=str, default="fcn8s")
-    parser.add_argument("--freeze_backbone", action="store_true")
-
+    
     args = parser.parse_args()
 
     classes = get_class_names()
