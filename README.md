@@ -8,6 +8,8 @@ For ablations and visualisations, see [the report](./FCN/report.pdf).
 
 #### Visualisations
 
+_Each image has three columns, representing input image, ground truth, followed by prediction (each image is a collage of these three in that order)._
+
 | Backbone type | 32s                                                       | 16s                                                       | 8s                                                       |
 | ------------- | --------------------------------------------------------- | --------------------------------------------------------- | -------------------------------------------------------- |
 | Frozen        | <img src="./images/fcn/frozen/32s_pred0.png" width=256>   | <img src="./images/fcn/frozen/16s_pred0.png" width=256>   | <img src="./images/fcn/frozen/8s_pred0.png" width=256>   |
@@ -34,6 +36,8 @@ cd FCN
 For ablations and visualisations, see [the report](./UNet/report.pdf).
 
 #### Visualisations
+
+_Each image has three columns, representing input image, ground truth, followed by prediction (each image is a collage of these three in that order)._
 
 | Variant         | Prediction 1                                            | Prediction 2                                            |
 | --------------- | ------------------------------------------------------- | ------------------------------------------------------- |
